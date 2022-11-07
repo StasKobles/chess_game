@@ -11,10 +11,15 @@
   align-items: center;
 }
 .board {
+  padding-top: 25px;
   width: calc(64px * 8);
   height: calc(64px * 8);
   display: flex;
   flex-wrap: wrap;
+}
+.boardContainer {
+  display: flex;
+  flex-direction: column;
 }
 .cell {
   width: 64px;
