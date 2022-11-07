@@ -34,5 +34,15 @@
   background-color: deepskyblue;
 }
 .white {
-  background-color: rgb(211, 198, 20);
+  background-color: yellow;
+}
+
+.selected {
+  background-color: brown;
+}
+.available {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background-color: green;
 }
