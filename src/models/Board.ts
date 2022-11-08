@@ -80,7 +80,9 @@ export class Board {
     new Rook(Colors.BLACK, this.getCell(7, 0));
     new Rook(Colors.WHITE, this.getCell(7, 7));
   }
-
+  public promoteQueen(color: Colors, x: number, y: number) {
+    new Queen(color, this.getCell(x, y));
+  }
   public addFigures() {
     this.addBishops();
     this.addKings();

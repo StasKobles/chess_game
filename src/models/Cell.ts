@@ -1,5 +1,5 @@
 import { Board } from "./Board";
-import { Figure } from "./figures/Figure";
+import { Figure, FigureNames } from "./figures/Figure";
 import { Colors } from "./Colors";
 import { runInThisContext } from "vm";
 
@@ -94,13 +94,32 @@ export class Cell {
   }
 
   moveFigure(target: Cell) {
-    if (this.figure && this.figure?.canMove(target)) {
-      this.figure.moveFigure(target);
-      if (target.figure) {
-        this.addLostFigure(target.figure);
-      }
-      target.setFigure(this.figure);
+    if (
+      this.figure?.color === Colors.BLACK &&
+      target.y === 7 &&
+      this.figure?.name === FigureNames.PAWN
+    ) {
+      const color = this.figure?.color;
       this.figure = null;
+      target.board.promoteQueen(color, target.x, target.y);
+    }
+    if (
+      this.figure?.color === Colors.WHITE &&
+      target.y === 0 &&
+      this.figure?.name === FigureNames.PAWN
+    ) {
+      const color = this.figure?.color;
+      this.figure = null;
+      target.board.promoteQueen(color, target.x, target.y);
+    } else {
+      if (this.figure && this.figure?.canMove(target)) {
+        this.figure.moveFigure(target);
+        if (target.figure) {
+          this.addLostFigure(target.figure);
+        }
+        target.setFigure(this.figure);
+        this.figure = null;
+      }
     }
   }
 }

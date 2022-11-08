@@ -3,7 +3,7 @@ import { Cell } from "../Cell";
 import { Colors } from "../Colors";
 
 export enum FigureNames {
-  "FIGURE" = "Figure",
+  FIGURE = "Figure",
   KING = "King",
   QUEEN = "Queen",
   KNIGHT = "Knight",
@@ -27,7 +27,6 @@ export class Figure {
     this.name = FigureNames.FIGURE;
     this.id = Math.random();
   }
-
   canMove(target: Cell): boolean {
     if (target.figure?.color === this.color) {
       return false;
@@ -35,7 +34,9 @@ export class Figure {
     if (target.figure?.name === FigureNames.KING) {
       return false;
     }
+
     return true;
   }
+
   moveFigure(target: Cell) {}
 }
