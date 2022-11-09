@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import BoardComponent from "./components/BoardComponent";
 import LostFigures from "./components/LostFigures";
+import Test from "./components/Test";
 import Timer from "./components/Timer";
 import { Board } from "./models/Board";
 import { Colors } from "./models/Colors";
@@ -14,8 +15,6 @@ const App = () => {
 
   useEffect(() => {
     restart();
-    setCurrentPlayer(whitePlayer);
-    
   }, []);
 
   function swapPlayer() {
@@ -29,6 +28,7 @@ const App = () => {
     newBoard.initCells();
     newBoard.addFigures();
     setBoard(newBoard);
+    setCurrentPlayer(whitePlayer);
   }
   return (
     <div className="app">
