@@ -11,12 +11,6 @@ export class Pawn extends Figure {
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
     this.name = FigureNames.PAWN;
   }
-
-  // firstStepFreeCell(pawn: Cell) {
-  //   const direction = this.figure?.color === Colors.BLACK ? 1 : -1;
-  //   const coordinates = { x: pawn.x, y: pawn.y + direction };
-  //   return this.cell.board.getCell(coordinates.x, coordinates.y).isEmpty();
-  // }
   canMove(target: Cell): boolean {
     if (!super.canMove(target)) {
       return false;
@@ -30,18 +24,8 @@ export class Pawn extends Figure {
       target.x === this.cell.x &&
       this.cell.board.getCell(target.x, target.y).isEmpty()
     ) {
-      if (
-        this.isFirstStep &&
-        !this.cell.board.getCell(this.cell.x, this.cell.y + direction).isEmpty()
-      ) {
-        // console.log(
-        //   this.cell.board.getCell(target.x, target.y + direction).isEmpty()
-        // );
-        return false;
-      }
       return true;
     }
-
     if (
       target.y === this.cell.y + direction &&
       (target.x === this.cell.x + 1 || target.x === this.cell.x - 1) &&
