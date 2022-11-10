@@ -81,7 +81,45 @@ export class Cell {
 
     return true;
   }
+  isPawnAttack(target: Cell): boolean {
+    const direction = this.figure?.color === Colors.BLACK ? 1 : -1;
+    if (
+      target.y === this.y + direction &&
+      (target.x === this.x + 1 || target.x === this.x - 1) &&
+      this.isEnemy(target)
+    ) {
+      return true;
+    }
+    return false;
+  }
+  isPawnMove(target: Cell, isFirstStep: boolean): boolean {
+    const direction = this.figure?.color === Colors.BLACK ? 1 : -1;
+    const firstStepDirection = this.figure?.color === Colors.BLACK ? 2 : -2;
+    if (
+      (target.y === this.y + direction ||
+        (isFirstStep && target.y === this.y + firstStepDirection)) &&
+      target.x === this.x &&
+      this.board.getCell(target.x, target.y).isEmpty()
+    ) {
+      if (
+        isFirstStep &&
+        !this.board.getCell(this.x, this.y + direction).isEmpty()
+      ) {
+        return false;
+      }
+      return true;
+    }
+    if (!!this.isPawnAttack(target)) {
+      return true;
+    }
+    return false;
+  }
+  isKnightMove(target: Cell): boolean {
+    const dx = Math.abs(this.x - target.x);
+    const dy = Math.abs(this.y - target.y);
 
+    return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
+  }
   setFigure(figure: Figure) {
     this.figure = figure;
     this.figure.cell = this;

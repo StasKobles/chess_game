@@ -12,6 +12,8 @@ export class Board {
   cells: Cell[][] = [];
   lostBlackFigures: Figure[] = [];
   lostWhiteFigures: Figure[] = [];
+  whiteCheck: boolean = false;
+  blackCheck: boolean = false;
   public initCells() {
     for (let i = 0; i < 8; i++) {
       const row: Cell[] = [];
