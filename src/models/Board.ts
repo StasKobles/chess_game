@@ -6,12 +6,15 @@ import { Knight } from "./figures/Knight";
 import { Pawn } from "./figures/Pawn";
 import { Queen } from "./figures/Queen";
 import { Rook } from "./figures/Rook";
-import { Figure } from "./figures/Figure";
+import { Figure, FigureNames } from "./figures/Figure";
 
 export class Board {
   cells: Cell[][] = [];
   lostBlackFigures: Figure[] = [];
   lostWhiteFigures: Figure[] = [];
+  whiteCheck: boolean = false;
+  blackCheck: boolean = false;
+  checkmate: boolean = false;
 
   public initCells() {
     for (let i = 0; i < 8; i++) {
@@ -32,6 +35,9 @@ export class Board {
     newBoard.cells = this.cells;
     newBoard.lostWhiteFigures = this.lostWhiteFigures;
     newBoard.lostBlackFigures = this.lostBlackFigures;
+    newBoard.whiteCheck = this.whiteCheck;
+    newBoard.blackCheck = this.blackCheck;
+    newBoard.checkmate = this.checkmate;
     return newBoard;
   }
 
@@ -48,7 +54,83 @@ export class Board {
   public getCell(x: number, y: number) {
     return this.cells[y][x];
   }
-
+  public findKings() {
+    let blackKing: Cell = new Cell(this, 0, 0, Colors.BLACK, null);
+    let whiteKing: Cell = new Cell(this, 0, 0, Colors.BLACK, null);
+    this.cells.forEach((element) => {
+      element.forEach((cell) => {
+        if (cell.figure?.name === FigureNames.KING) {
+          cell.figure.color === Colors.WHITE
+            ? (whiteKing = cell)
+            : (blackKing = cell);
+        }
+      });
+    });
+    return { whiteKing, blackKing };
+  }
+  public isKingUnderAttack() {
+    let WhiteCheckFigures: Cell | null = null;
+    let BlackCheckFigures: Cell | null = null;
+    this.cells.forEach((element) => {
+      element.forEach((cell) => {
+        if (cell.figure?.canMove(this.findKings().whiteKing)) {
+          WhiteCheckFigures = cell;
+        }
+        if (cell.figure?.canMove(this.findKings().blackKing)) {
+          BlackCheckFigures = cell;
+        }
+      });
+    });
+    return { WhiteCheckFigures, BlackCheckFigures };
+  }
+  public checkMoves() {
+    const checkList = this.isKingUnderAttack();
+    if (checkList.WhiteCheckFigures) {
+      const king: Cell = this.findKings().whiteKing;
+      const target: Cell = checkList.WhiteCheckFigures;
+      if (target.figure?.name === FigureNames.BISHOP) {
+        target.isEmptyDiagonal(king);
+      }
+      if (target.figure?.name === FigureNames.KNIGHT) {
+        target.isKnightMove(king);
+      }
+      if (target.figure?.name === FigureNames.PAWN) {
+        target.isPawnAttack(king);
+      }
+      if (target.figure?.name === FigureNames.QUEEN) {
+        target.isEmptyDiagonal(king);
+        target.isEmptyVertical(king);
+        target.isEmptyHorizontal(king);
+      }
+      if (target.figure?.name === FigureNames.ROOK) {
+        target.isEmptyHorizontal(king);
+        target.isEmptyVertical(king);
+      }
+      if (target.figure?.name === FigureNames.KING) {
+        return false;
+      }
+    }
+  }
+  public isCheckmate() {
+    if (this.isKingUnderAttack().BlackCheckFigures && this.blackCheck) {
+      this.checkmate = true;
+    }
+    if (!this.isKingUnderAttack().BlackCheckFigures && this.blackCheck) {
+      this.blackCheck = false;
+    }
+    if (this.isKingUnderAttack().BlackCheckFigures && !this.blackCheck) {
+      this.blackCheck = true;
+    }
+    if (this.isKingUnderAttack().WhiteCheckFigures && this.whiteCheck) {
+      this.checkmate = true;
+    }
+    if (!this.isKingUnderAttack().WhiteCheckFigures && this.whiteCheck) {
+      this.whiteCheck = false;
+    }
+    if (this.isKingUnderAttack().WhiteCheckFigures && !this.whiteCheck) {
+      this.whiteCheck = true;
+    }
+  }
   private addPawns() {
     for (let i = 0; i < 8; i++) {
       new Pawn(Colors.BLACK, this.getCell(i, 1));

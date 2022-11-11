@@ -24,9 +24,6 @@ const BoardComponent: FC<BoardProps> = ({
   restart,
 }) => {
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
-  const [isWhiteCheck, setIsWhiteCheck] = useState<boolean>(false);
-  const [isBlackCheck, setIsBlackCheck] = useState<boolean>(false);
-  const [isMate, setIsMate] = useState<boolean>(false);
 
   // For modal block
   const [show, setShow] = useState(true);
@@ -40,7 +37,7 @@ const BoardComponent: FC<BoardProps> = ({
     ) {
       selectedCell?.moveFigure(cell);
       swapPlayer();
-      Mate();
+      board.isCheckmate();
       setSelectedCell(null);
     } else {
       if (cell.figure?.color === currentPlayer?.color) {
@@ -50,7 +47,7 @@ const BoardComponent: FC<BoardProps> = ({
   }
 
   useEffect(() => {
-    checkMoves();
+    // board.checkMoves();
     highlightCells();
   }, [selectedCell]);
 
@@ -63,99 +60,15 @@ const BoardComponent: FC<BoardProps> = ({
     const newBoard = board.getCopyBoard();
     setBoard(newBoard);
   }
-  function findKings() {
-    let blackKing: Cell = new Cell(board, 0, 0, Colors.BLACK, null);
-    let whiteKing: Cell = new Cell(board, 0, 0, Colors.BLACK, null);
-    board.cells.forEach((element) => {
-      element.forEach((cell) => {
-        if (cell.figure?.name === FigureNames.KING) {
-          cell.figure.color === Colors.WHITE
-            ? (whiteKing = cell)
-            : (blackKing = cell);
-        }
-      });
-    });
-    return { whiteKing, blackKing };
-  }
-  function Mate(): void {
-    if (isKingUnderAttack().BlackCheckFigures && isBlackCheck) {
-      console.log("1");
-      setIsMate(true);
-    }
-    if (!isKingUnderAttack().BlackCheckFigures && isBlackCheck) {
-      console.log("2");
-      setIsBlackCheck(false);
-    }
-    if (isKingUnderAttack().BlackCheckFigures && !isBlackCheck) {
-      console.log("3");
-      setIsBlackCheck(true);
-    }
-    if (isKingUnderAttack().WhiteCheckFigures && isWhiteCheck) {
-      console.log("1");
-      setIsMate(true);
-    }
-    if (!isKingUnderAttack().WhiteCheckFigures && isWhiteCheck) {
-      console.log("2");
-      setIsWhiteCheck(false);
-    }
-    if (isKingUnderAttack().WhiteCheckFigures && !isWhiteCheck) {
-      console.log("3");
-      setIsWhiteCheck(true);
-    }
-  }
-
-  function isKingUnderAttack() {
-    let WhiteCheckFigures: Cell | null = null;
-    let BlackCheckFigures: Cell | null = null;
-    board.cells.forEach((element) => {
-      element.forEach((cell) => {
-        if (cell.figure?.canMove(findKings().whiteKing)) {
-          WhiteCheckFigures = cell;
-        }
-        if (cell.figure?.canMove(findKings().blackKing)) {
-          BlackCheckFigures = cell;
-        }
-      });
-    });
-    return { WhiteCheckFigures, BlackCheckFigures };
-  }
-  function checkMoves() {
-    const checkList = isKingUnderAttack();
-    if (checkList.WhiteCheckFigures) {
-      const king: Cell = findKings().whiteKing;
-      const target: Cell = checkList.WhiteCheckFigures;
-      if (target.figure?.name === FigureNames.BISHOP) {
-        target.isEmptyDiagonal(king);
-      }
-      if (target.figure?.name === FigureNames.KNIGHT) {
-        target.isKnightMove(king);
-      }
-      if (target.figure?.name === FigureNames.PAWN) {
-        target.isPawnAttack(king);
-      }
-      if (target.figure?.name === FigureNames.QUEEN) {
-        target.isEmptyDiagonal(king);
-        target.isEmptyVertical(king);
-        target.isEmptyHorizontal(king);
-      }
-      if (target.figure?.name === FigureNames.ROOK) {
-        target.isEmptyHorizontal(king);
-        target.isEmptyVertical(king);
-      }
-      if (target.figure?.name === FigureNames.KING) {
-        return false;
-      }
-    }
-  }
 
   const handleRestart = () => {
-    setIsMate(false);
+    board.checkmate = false;
     restart();
   };
 
   return (
     <div>
-      {isMate ? (
+      {board.checkmate ? (
         <Modal
           show={show}
           onHide={handleClose}
@@ -166,8 +79,8 @@ const BoardComponent: FC<BoardProps> = ({
             <Modal.Title>That`s mate!</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {isBlackCheck ? "White" : "Black"} wins! Congratulations! One more
-            game?
+            {board.blackCheck ? "White" : "Black"} wins! Congratulations! One
+            more game?
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={handleRestart}>
