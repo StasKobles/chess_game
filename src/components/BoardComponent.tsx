@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { Figure, Modal, Button } from "react-bootstrap";
+import { setMaxListeners } from "stream";
 import { Board } from "../models/Board";
 import { Cell } from "../models/Cell";
 import { Colors } from "../models/Colors";
@@ -8,6 +9,7 @@ import { Player } from "../models/Player";
 import CellComponents from "./CellComponents";
 
 interface BoardProps {
+  restart: () => void;
   board: Board;
   setBoard: (board: Board) => void;
   currentPlayer: Player | null;
@@ -19,6 +21,7 @@ const BoardComponent: FC<BoardProps> = ({
   setBoard,
   currentPlayer,
   swapPlayer,
+  restart,
 }) => {
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const [isWhiteCheck, setIsWhiteCheck] = useState<boolean>(false);
@@ -81,13 +84,23 @@ const BoardComponent: FC<BoardProps> = ({
     }
     if (!isKingUnderAttack().BlackCheckFigures && isBlackCheck) {
       console.log("2");
-
       setIsBlackCheck(false);
     }
     if (isKingUnderAttack().BlackCheckFigures && !isBlackCheck) {
       console.log("3");
-
       setIsBlackCheck(true);
+    }
+    if (isKingUnderAttack().WhiteCheckFigures && isWhiteCheck) {
+      console.log("1");
+      setIsMate(true);
+    }
+    if (!isKingUnderAttack().WhiteCheckFigures && isWhiteCheck) {
+      console.log("2");
+      setIsWhiteCheck(false);
+    }
+    if (isKingUnderAttack().WhiteCheckFigures && !isWhiteCheck) {
+      console.log("3");
+      setIsWhiteCheck(true);
     }
   }
 
@@ -135,6 +148,11 @@ const BoardComponent: FC<BoardProps> = ({
     }
   }
 
+  const handleRestart = () => {
+    setIsMate(false);
+    restart();
+  };
+
   return (
     <div>
       {isMate ? (
@@ -144,15 +162,15 @@ const BoardComponent: FC<BoardProps> = ({
           backdrop="static"
           keyboard={false}
         >
-          <Modal.Header closeButton>
-            <Modal.Title>Modal title</Modal.Title>
+          <Modal.Header>
+            <Modal.Title>That`s mate!</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            That`s mate! {isBlackCheck ? "White" : "Black"} wins!
-            Congratulations! One more game?
+            {isBlackCheck ? "White" : "Black"} wins! Congratulations! One more
+            game?
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={updateBoard}>
+            <Button variant="primary" onClick={handleRestart}>
               New game
             </Button>
           </Modal.Footer>
