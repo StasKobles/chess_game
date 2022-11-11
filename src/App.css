@@ -4,8 +4,13 @@
 }
 
 .app {
-  width: 100vw;
-  height: 100vw;
+  width: 60%;
+  height: 80%;
+  border: 5px solid gainsboro;
+  padding: 2px;
+  border-radius: 25px;
+  margin-left: 20%;
+  margin-top: 75px;
   display: flex;
   justify-content: center;
   align-items: center;

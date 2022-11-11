@@ -47,7 +47,6 @@ const BoardComponent: FC<BoardProps> = ({
   }
 
   useEffect(() => {
-    // board.checkMoves();
     highlightCells();
   }, [selectedCell]);
 
@@ -67,7 +66,7 @@ const BoardComponent: FC<BoardProps> = ({
   };
 
   return (
-    <div>
+    <div className="boardContainer">
       {board.checkmate ? (
         <Modal
           show={show}
@@ -89,26 +88,32 @@ const BoardComponent: FC<BoardProps> = ({
           </Modal.Footer>
         </Modal>
       ) : (
-        <div className="boardContainer">
-          <h3>Current player {currentPlayer?.color}</h3>
-          <div className="board">
-            {board.cells.map((row, index) => (
-              <React.Fragment key={index}>
-                {row.map((cell) => (
-                  <CellComponents
-                    click={click}
-                    cell={cell}
-                    key={cell.id}
-                    selected={
-                      cell.x === selectedCell?.x && cell.y === selectedCell?.y
-                    }
-                  />
-                ))}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
+        <></>
       )}
+      <h3>Current player {currentPlayer?.color}</h3>
+      <div>
+        {board.whiteCheck || board.blackCheck ? (
+          <h3>It`s check! Protect the king</h3>
+        ) : (
+          <></>
+        )}
+      </div>
+      <div className="board">
+        {board.cells.map((row, index) => (
+          <React.Fragment key={index}>
+            {row.map((cell) => (
+              <CellComponents
+                click={click}
+                cell={cell}
+                key={cell.id}
+                selected={
+                  cell.x === selectedCell?.x && cell.y === selectedCell?.y
+                }
+              />
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 };

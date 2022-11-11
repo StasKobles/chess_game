@@ -31,7 +31,15 @@ export class Figure {
     if (target.figure?.color === this.color) {
       return false;
     }
+    if (
+      (target.board.whiteCheck || target.board.blackCheck) &&
+      target.available === false
+    ) {
+      return false;
+    }
+    // Check in `CHECK`, if it`s true, try to kill target or close his line to king. If it`s king, try to escape to free cell. TRY RECURSIVE
     return true;
   }
+
   moveFigure(target: Cell) {}
 }

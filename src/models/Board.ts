@@ -42,12 +42,25 @@ export class Board {
   }
 
   public highlightCells(selectedCell: Cell | null) {
+    const info = this.checkMoves();
+    let isMate = true;
     for (let i = 0; i < this.cells.length; i++) {
       const row = this.cells[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        target.available = !!selectedCell?.figure?.canMove(target);
+        if (info) {
+          target === info.target && !!selectedCell?.figure?.canMove(target)
+            ? ((target.available = true), (isMate = false))
+            : (target.available = false);
+        }
+        if (!info) {
+          target.available = !!selectedCell?.figure?.canMove(target);
+          isMate = false;
+        }
       }
+    }
+    if (isMate) {
+      this.checkmate = true;
     }
   }
 
@@ -85,32 +98,47 @@ export class Board {
   }
   public checkMoves() {
     const checkList = this.isKingUnderAttack();
+
     if (checkList.WhiteCheckFigures) {
       const king: Cell = this.findKings().whiteKing;
       const target: Cell = checkList.WhiteCheckFigures;
-      if (target.figure?.name === FigureNames.BISHOP) {
-        target.isEmptyDiagonal(king);
-      }
-      if (target.figure?.name === FigureNames.KNIGHT) {
-        target.isKnightMove(king);
-      }
-      if (target.figure?.name === FigureNames.PAWN) {
-        target.isPawnAttack(king);
-      }
-      if (target.figure?.name === FigureNames.QUEEN) {
-        target.isEmptyDiagonal(king);
-        target.isEmptyVertical(king);
-        target.isEmptyHorizontal(king);
-      }
-      if (target.figure?.name === FigureNames.ROOK) {
-        target.isEmptyHorizontal(king);
-        target.isEmptyVertical(king);
-      }
-      if (target.figure?.name === FigureNames.KING) {
-        return false;
-      }
+      return {
+        king: king,
+        target: target,
+      };
+    }
+
+    if (checkList.BlackCheckFigures) {
+      const king: Cell = this.findKings().blackKing;
+      const target: Cell = checkList.BlackCheckFigures;
+      return {
+        king: king,
+        target: target,
+      };
     }
   }
+
+  // if (target.figure?.name === FigureNames.BISHOP) {
+
+  //       target.isEmptyDiagonal(king);
+  //     }
+  //     if (target.figure?.name === FigureNames.KNIGHT) {
+  //       target.isKnightMove(king);
+  //     }
+  //     if (target.figure?.name === FigureNames.PAWN) {
+  //       target.isPawnAttack(king);
+  //     }
+  //     if (target.figure?.name === FigureNames.QUEEN) {
+  //       target.isEmptyDiagonal(king);
+  //       target.isEmptyVertical(king);
+  //       target.isEmptyHorizontal(king);
+  //     }
+  //     if (target.figure?.name === FigureNames.ROOK) {
+  //       target.isEmptyHorizontal(king);
+  //       target.isEmptyVertical(king);
+  //     }
+  //     if (target.figure?.name === FigureNames.KING) {
+  //       return false;}
   public isCheckmate() {
     if (this.isKingUnderAttack().BlackCheckFigures && this.blackCheck) {
       this.checkmate = true;
