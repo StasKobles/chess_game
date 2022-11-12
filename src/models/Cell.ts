@@ -85,8 +85,7 @@ export class Cell {
     const direction = this.figure?.color === Colors.BLACK ? 1 : -1;
     if (
       target.y === this.y + direction &&
-      (target.x === this.x + 1 || target.x === this.x - 1) &&
-      this.isEnemy(target)
+      (target.x === this.x + 1 || target.x === this.x - 1)
     ) {
       return true;
     }
@@ -109,7 +108,11 @@ export class Cell {
       }
       return true;
     }
-    if (!!this.isPawnAttack(target)) {
+    if (
+      target.y === this.y + direction &&
+      (target.x === this.x + 1 || target.x === this.x - 1) &&
+      this.isEnemy(target)
+    ) {
       return true;
     }
     return false;

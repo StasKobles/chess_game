@@ -35,31 +35,62 @@ export class Board {
     newBoard.cells = this.cells;
     newBoard.lostWhiteFigures = this.lostWhiteFigures;
     newBoard.lostBlackFigures = this.lostBlackFigures;
-    newBoard.whiteCheck = this.whiteCheck;
     newBoard.blackCheck = this.blackCheck;
+    newBoard.whiteCheck = this.blackCheck;
     newBoard.checkmate = this.checkmate;
     return newBoard;
   }
 
-  public highlightCells(selectedCell: Cell | null) {
-    const info = this.checkMoves();
+  public highlightCells(selectedCell: Cell | null, color: Colors | undefined) {
+    const info = this.checkList();
     let isMate = true;
     for (let i = 0; i < this.cells.length; i++) {
       const row = this.cells[i];
       for (let j = 0; j < row.length; j++) {
         const target = row[j];
-        if (info) {
-          target === info.target && !!selectedCell?.figure?.canMove(target)
-            ? ((target.available = true), (isMate = false))
-            : (target.available = false);
+        if (info?.king.figure) {
+          if (selectedCell === info.king) {
+            if (
+              this.isFreeForKing(target, color) &&
+              !!selectedCell?.figure?.canMove(target)
+            ) {
+              target.available = true;
+              isMate = false;
+            } else {
+              target.available = false;
+            }
+          }
+          if (selectedCell !== info.king) {
+            this.checkMoves(target) && !!selectedCell?.figure?.canMove(target)
+              ? ((target.available = true), (isMate = false))
+              : (target.available = false);
+          }
+          if (!selectedCell) {
+            isMate = false;
+          }
         }
         if (!info) {
-          target.available = !!selectedCell?.figure?.canMove(target);
-          isMate = false;
+          if (selectedCell?.figure?.name === FigureNames.KING) {
+            if (
+              this.isFreeForKing(target, color) &&
+              !!selectedCell?.figure?.canMove(target)
+            ) {
+              target.available = true;
+              isMate = false;
+            } else {
+              target.available = false;
+            }
+          }
+          if (selectedCell?.figure?.name !== FigureNames.KING) {
+            target.available = !!selectedCell?.figure?.canMove(target);
+            isMate = false;
+          }
         }
       }
     }
-    if (isMate) {
+    // TODO mate
+
+    if (isMate === true) {
       this.checkmate = true;
     }
   }
@@ -81,6 +112,42 @@ export class Board {
     });
     return { whiteKing, blackKing };
   }
+  public isFreeForKing(target: Cell, color: Colors | undefined): boolean {
+    let targetUnderAttack: boolean = false;
+    this.cells.forEach((element) => {
+      element.forEach((cell) => {
+        if (cell.figure?.color !== color) {
+          if (
+            cell.figure?.name === FigureNames.PAWN &&
+            cell.figure.canMove(target)
+          ) {
+            targetUnderAttack = false;
+          }
+          if (
+            cell.figure?.name === FigureNames.PAWN &&
+            cell.isPawnAttack(target)
+          ) {
+            targetUnderAttack = true;
+          }
+
+          if (
+            cell.figure?.canMove(target) &&
+            (cell.figure?.name === FigureNames.ROOK ||
+              cell.figure?.name === FigureNames.BISHOP ||
+              cell.figure?.name === FigureNames.QUEEN ||
+              cell.figure?.name === FigureNames.KING ||
+              cell.figure?.name === FigureNames.KNIGHT)
+          ) {
+            targetUnderAttack = true;
+          }
+        }
+      });
+    });
+    if (targetUnderAttack) {
+      return false;
+    }
+    return true;
+  }
   public isKingUnderAttack() {
     let WhiteCheckFigures: Cell | null = null;
     let BlackCheckFigures: Cell | null = null;
@@ -96,7 +163,7 @@ export class Board {
     });
     return { WhiteCheckFigures, BlackCheckFigures };
   }
-  public checkMoves() {
+  public checkList() {
     const checkList = this.isKingUnderAttack();
 
     if (checkList.WhiteCheckFigures) {
@@ -104,7 +171,7 @@ export class Board {
       const target: Cell = checkList.WhiteCheckFigures;
       return {
         king: king,
-        target: target,
+        attacker: target,
       };
     }
 
@@ -113,32 +180,85 @@ export class Board {
       const target: Cell = checkList.BlackCheckFigures;
       return {
         king: king,
-        target: target,
+        attacker: target,
       };
     }
   }
+  private checkMoves(target: Cell): boolean {
+    const checkList = this.checkList();
+    if (target === checkList?.attacker) {
+      return true;
+    }
+    if (target === checkList?.attacker) {
+      return false;
+    }
+    if (checkList?.attacker.figure?.name === FigureNames.QUEEN) {
+      if (checkList.attacker.isEmptyVertical(checkList.king)) {
+        return (
+          checkList.attacker.isEmptyVertical(target) &&
+          checkList.king.isEmptyVertical(target)
+        );
+      }
+      if (checkList.attacker.isEmptyDiagonal(checkList.king)) {
+        return (
+          checkList.attacker.isEmptyDiagonal(target) &&
+          checkList.king.isEmptyDiagonal(target)
+        );
+      }
+      if (checkList.attacker.isEmptyHorizontal(checkList.king)) {
+        return (
+          checkList.attacker.isEmptyHorizontal(target) &&
+          checkList.king.isEmptyHorizontal(target)
+        );
+      }
+    }
+    if (checkList?.attacker.figure?.name === FigureNames.BISHOP) {
+      if (checkList.attacker.isEmptyDiagonal(checkList.king)) {
+        return (
+          checkList.attacker.isEmptyDiagonal(target) &&
+          checkList.king.isEmptyDiagonal(target)
+        );
+      }
+    }
+    if (checkList?.attacker.figure?.name === FigureNames.ROOK) {
+      if (checkList.attacker.isEmptyVertical(checkList.king)) {
+        return (
+          checkList.attacker.isEmptyVertical(target) &&
+          checkList.king.isEmptyVertical(target)
+        );
+      }
+      if (checkList.attacker.isEmptyHorizontal(checkList.king)) {
+        return (
+          checkList.attacker.isEmptyHorizontal(target) &&
+          checkList.king.isEmptyHorizontal(target)
+        );
+      }
+    }
+    return false;
 
-  // if (target.figure?.name === FigureNames.BISHOP) {
+    // if (target.figure?.name === FigureNames.BISHOP) {
+    //   target.isEmptyDiagonal(king);
+    // }
+    // if (target.figure?.name === FigureNames.KNIGHT) {
+    //   target.isKnightMove(king);
+    // }
+    // if (target.figure?.name === FigureNames.PAWN) {
+    //   target.isPawnAttack(king);
+    // }
+    // if (target.figure?.name === FigureNames.QUEEN) {
+    //   target.isEmptyDiagonal(king);
+    //   target.isEmptyVertical(king);
+    //   target.isEmptyHorizontal(king);
+    // }
+    // if (target.figure?.name === FigureNames.ROOK) {
+    //   target.isEmptyHorizontal(king);
+    //   target.isEmptyVertical(king);
+    // }
+    // if (target.figure?.name === FigureNames.KING) {
+    //   return false;
+    // }
+  }
 
-  //       target.isEmptyDiagonal(king);
-  //     }
-  //     if (target.figure?.name === FigureNames.KNIGHT) {
-  //       target.isKnightMove(king);
-  //     }
-  //     if (target.figure?.name === FigureNames.PAWN) {
-  //       target.isPawnAttack(king);
-  //     }
-  //     if (target.figure?.name === FigureNames.QUEEN) {
-  //       target.isEmptyDiagonal(king);
-  //       target.isEmptyVertical(king);
-  //       target.isEmptyHorizontal(king);
-  //     }
-  //     if (target.figure?.name === FigureNames.ROOK) {
-  //       target.isEmptyHorizontal(king);
-  //       target.isEmptyVertical(king);
-  //     }
-  //     if (target.figure?.name === FigureNames.KING) {
-  //       return false;}
   public isCheckmate() {
     if (this.isKingUnderAttack().BlackCheckFigures && this.blackCheck) {
       this.checkmate = true;

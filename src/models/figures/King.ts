@@ -13,22 +13,28 @@ export class King extends Figure {
     if (!super.canMove(target)) {
       return false;
     }
-    if(Math.abs(target.x - this.cell.x) > 1 || Math.abs(target.y - this.cell.y) > 1 ) {
+    if (
+      Math.abs(target.x - this.cell.x) > 1 ||
+      Math.abs(target.y - this.cell.y) > 1
+    ) {
       return false;
     }
 
-    if(this.cell.isEmptyVertical(target)) {
+    if (this.cell.isEmptyVertical(target)) {
       return true;
     }
 
-    if(this.cell.isEmptyHorizontal(target)) {
+    if (this.cell.isEmptyHorizontal(target)) {
       return true;
     }
 
-    if(this.cell.isEmptyDiagonal(target)) {
+    if (this.cell.isEmptyDiagonal(target)) {
+      return true;
+    }
+    if (this.cell.board.isFreeForKing(target, this.color)) {
       return true;
     }
 
-    return false
+    return false;
   }
 }
