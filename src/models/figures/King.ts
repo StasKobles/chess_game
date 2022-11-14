@@ -31,10 +31,11 @@ export class King extends Figure {
     if (this.cell.isEmptyDiagonal(target)) {
       return true;
     }
-    if (this.cell.board.isFreeForKing(target, this.color)) {
-      return true;
+    if (!this.cell.board.isCellUnderAttack(target, this.color)) {
+      return false;
     }
 
     return false;
   }
+  moveFigure(_target: Cell): void {}
 }

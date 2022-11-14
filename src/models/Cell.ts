@@ -1,8 +1,8 @@
 import { Board } from "./Board";
 import { Figure, FigureNames } from "./figures/Figure";
 import { Colors } from "./Colors";
-import { runInThisContext } from "vm";
-
+import { King } from "./figures/King";
+import { Rook } from "./figures/Rook";
 export class Cell {
   readonly x: number; // Coordinates on X
   readonly y: number; // Coordinates on Y
@@ -135,23 +135,73 @@ export class Cell {
   }
 
   moveFigure(target: Cell) {
+    // if (
+    //   this.figure?.color === Colors.BLACK &&
+    //   target.y === 7 &&
+    //   this.figure?.name === FigureNames.PAWN
+    // ) {
+    //   const color = this.figure?.color;
+    //   if (target.figure) {
+    //     this.addLostFigure(target.figure);
+    //   }
+    //   this.figure = null;
+    //   target.board.promotePawn(color, target, FigureNames.QUEEN);
+    // }
+    // if (
+    //   this.figure?.color === Colors.WHITE &&
+    //   target.y === 0 &&
+    //   this.figure?.name === FigureNames.PAWN
+    // ) {
+    //   const color = this.figure?.color;
+    //   if (target.figure) {
+    //     this.addLostFigure(target.figure);
+    //   }
+    //   this.figure = null;
+    //   target.board.promotePawn(color, target, FigureNames.QUEEN);
+    // }
     if (
-      this.figure?.color === Colors.BLACK &&
-      target.y === 7 &&
-      this.figure?.name === FigureNames.PAWN
+      this?.figure?.name === FigureNames.KING &&
+      this?.figure?.color === Colors.BLACK &&
+      target === this.board.cells[0][2]
     ) {
-      const color = this.figure?.color;
-      this.figure = null;
-      target.board.promoteQueen(color, target.x, target.y);
+      this.board.cells[this.y][this.x].figure = null;
+      this.board.cells[0][4].figure = null;
+      this.board.cells[0][0].figure = null;
+      new King(Colors.BLACK, this.board.cells[0][2]);
+      new Rook(Colors.BLACK, this.board.cells[0][3]);
     }
     if (
-      this.figure?.color === Colors.WHITE &&
-      target.y === 0 &&
-      this.figure?.name === FigureNames.PAWN
+      this?.figure?.name === FigureNames.KING &&
+      this?.figure?.color === Colors.BLACK &&
+      target === this.board.cells[0][6]
     ) {
-      const color = this.figure?.color;
-      this.figure = null;
-      target.board.promoteQueen(color, target.x, target.y);
+      this.board.cells[this.y][this.x].figure = null;
+      this.board.cells[0][4].figure = null;
+      this.board.cells[0][7].figure = null;
+      new King(Colors.BLACK, this.board.cells[0][6]);
+      new Rook(Colors.BLACK, this.board.cells[0][5]);
+    }
+    if (
+      this?.figure?.name === FigureNames.KING &&
+      this?.figure?.color === Colors.WHITE &&
+      target === this.board.cells[7][6]
+    ) {
+      this.board.cells[this.y][this.x].figure = null;
+      this.board.cells[7][4].figure = null;
+      this.board.cells[7][7].figure = null;
+      new King(Colors.WHITE, this.board.cells[7][6]);
+      new Rook(Colors.WHITE, this.board.cells[7][5]);
+    }
+    if (
+      this?.figure?.name === FigureNames.KING &&
+      this?.figure?.color === Colors.WHITE &&
+      target === this.board.cells[7][2]
+    ) {
+      this.board.cells[this.y][this.x].figure = null;
+      this.board.cells[7][4].figure = null;
+      this.board.cells[7][0].figure = null;
+      new King(Colors.WHITE, this.board.cells[7][2]);
+      new Rook(Colors.WHITE, this.board.cells[7][3]);
     } else {
       if (this.figure && this.figure?.canMove(target)) {
         this.figure.moveFigure(target);

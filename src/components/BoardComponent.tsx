@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
-import { Figure, Modal, Button } from "react-bootstrap";
-import { setMaxListeners } from "stream";
+import { Modal, Button } from "react-bootstrap";
 import { Board } from "../models/Board";
 import { Cell } from "../models/Cell";
-import { Colors } from "../models/Colors";
 import { FigureNames } from "../models/figures/Figure";
 import { Player } from "../models/Player";
 import CellComponents from "./CellComponents";
@@ -30,18 +28,18 @@ const BoardComponent: FC<BoardProps> = ({
   const handleClose = () => setShow(false);
 
   function click(cell: Cell) {
-    if (
-      selectedCell &&
-      selectedCell !== cell &&
-      selectedCell.figure?.canMove(cell)
-    ) {
+    if (selectedCell && selectedCell !== cell && cell.available) {
       selectedCell?.moveFigure(cell);
+      board.pawnReady();
       swapPlayer();
-      board.isCheckmate();
+      board.isCheckmate(currentPlayer?.color);
       setSelectedCell(null);
     } else {
       if (cell.figure?.color === currentPlayer?.color) {
         setSelectedCell(cell);
+      }
+      if (!cell.figure) {
+        setSelectedCell(null);
       }
     }
   }
@@ -60,9 +58,20 @@ const BoardComponent: FC<BoardProps> = ({
     setBoard(newBoard);
   }
 
-  const handleRestart = () => {
+  const handleRestartMate = () => {
     board.checkmate = false;
     restart();
+  };
+  const handleRestartPromote = (type: FigureNames) => {
+    if (board.promotePawnCell) {
+      board.promotePawn(
+        board.promotePawnCell?.figure?.color,
+        board.promotePawnCell,
+        type
+      );
+    }
+    board.promotePawnCell = null;
+    updateBoard();
   };
 
   return (
@@ -82,8 +91,46 @@ const BoardComponent: FC<BoardProps> = ({
             more game?
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={handleRestart}>
+            <Button variant="primary" onClick={handleRestartMate}>
               New game
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : (
+        <></>
+      )}
+      {board.promotePawnCell ? (
+        <Modal
+          show={show}
+          onHide={handleClose}
+          backdrop="static"
+          keyboard={false}
+        >
+          <Modal.Body>Choose the figure to promote your pawn!</Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="primary"
+              onClick={() => handleRestartPromote(FigureNames.QUEEN)}
+            >
+              Queen
+            </Button>{" "}
+            <Button
+              variant="primary"
+              onClick={() => handleRestartPromote(FigureNames.KNIGHT)}
+            >
+              Knight
+            </Button>{" "}
+            <Button
+              variant="primary"
+              onClick={() => handleRestartPromote(FigureNames.BISHOP)}
+            >
+              Bishop
+            </Button>{" "}
+            <Button
+              variant="primary"
+              onClick={() => handleRestartPromote(FigureNames.ROOK)}
+            >
+              Rook
             </Button>
           </Modal.Footer>
         </Modal>

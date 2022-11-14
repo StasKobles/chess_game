@@ -4,8 +4,6 @@ import { Figure, FigureNames } from "./Figure";
 import whiteLogo from "../../assets/white-pawn.png";
 import blackLogo from "../../assets/black-pawn.png";
 export class Pawn extends Figure {
-  isFirstStep: boolean = true;
-
   constructor(color: Colors, cell: Cell) {
     super(color, cell);
     this.logo = color === Colors.BLACK ? blackLogo : whiteLogo;
@@ -19,10 +17,5 @@ export class Pawn extends Figure {
       return true;
     }
     return false;
-  }
-
-  moveFigure(target: Cell) {
-    super.moveFigure(target);
-    this.isFirstStep = false;
   }
 }

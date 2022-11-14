@@ -18,6 +18,7 @@ export class Figure {
   cell: Cell;
   name: FigureNames;
   id: number;
+  isFirstStep: boolean;
 
   constructor(color: Colors, cell: Cell) {
     this.color = color;
@@ -26,6 +27,7 @@ export class Figure {
     this.logo = null;
     this.name = FigureNames.FIGURE;
     this.id = Math.random();
+    this.isFirstStep = true;
   }
   canMove(target: Cell): boolean {
     if (target.figure?.color === this.color) {
@@ -37,9 +39,10 @@ export class Figure {
     ) {
       return false;
     }
-    // Check in `CHECK`, if it`s true, try to kill target or close his line to king. If it`s king, try to escape to free cell. TRY RECURSIVE
     return true;
   }
 
-  moveFigure(target: Cell) {}
+  moveFigure(_target: Cell) {
+    this.isFirstStep = false;
+  }
 }

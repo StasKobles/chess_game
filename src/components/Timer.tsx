@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Colors } from "../models/Colors";
 import { Player } from "../models/Player";
 import Button from "react-bootstrap/Button";

@@ -7,14 +7,16 @@ import { Pawn } from "./figures/Pawn";
 import { Queen } from "./figures/Queen";
 import { Rook } from "./figures/Rook";
 import { Figure, FigureNames } from "./figures/Figure";
+var lodash = require("lodash");
 
 export class Board {
-  cells: Cell[][] = [];
+  cells: Cell[][] = []; //Y X
   lostBlackFigures: Figure[] = [];
   lostWhiteFigures: Figure[] = [];
   whiteCheck: boolean = false;
   blackCheck: boolean = false;
   checkmate: boolean = false;
+  promotePawnCell: Cell | null = null;
 
   public initCells() {
     for (let i = 0; i < 8; i++) {
@@ -29,72 +31,156 @@ export class Board {
       this.cells.push(row);
     }
   }
-
   public getCopyBoard(): Board {
     const newBoard = new Board();
     newBoard.cells = this.cells;
     newBoard.lostWhiteFigures = this.lostWhiteFigures;
     newBoard.lostBlackFigures = this.lostBlackFigures;
     newBoard.blackCheck = this.blackCheck;
-    newBoard.whiteCheck = this.blackCheck;
+    newBoard.whiteCheck = this.whiteCheck;
     newBoard.checkmate = this.checkmate;
+    newBoard.promotePawnCell = this.promotePawnCell;
     return newBoard;
   }
-
   public highlightCells(selectedCell: Cell | null, color: Colors | undefined) {
     const info = this.checkList();
-    let isMate = true;
     for (let i = 0; i < this.cells.length; i++) {
       const row = this.cells[i];
       for (let j = 0; j < row.length; j++) {
-        const target = row[j];
+        let target = row[j];
         if (info?.king.figure) {
-          if (selectedCell === info.king) {
-            if (
-              this.isFreeForKing(target, color) &&
-              !!selectedCell?.figure?.canMove(target)
-            ) {
-              target.available = true;
-              isMate = false;
-            } else {
-              target.available = false;
+          target.available = false;
+          if (
+            selectedCell === info.king &&
+            !!selectedCell?.figure?.canMove(target)
+          ) {
+            if (this.isCellUnderAttack(target, color)) {
+              const copyCells: Board = lodash.cloneDeep(this);
+              copyCells.cells[selectedCell.y][selectedCell.x].figure = null;
+              copyCells.cells[target.y][target.x].figure = selectedCell.figure;
+              (copyCells.isKingUnderAttack().BlackCheckFigures &&
+                selectedCell.figure?.color === Colors.BLACK) ||
+              (copyCells.isKingUnderAttack().WhiteCheckFigures &&
+                selectedCell.figure?.color === Colors.WHITE)
+                ? (target.available = false)
+                : (target.available = true);
             }
           }
           if (selectedCell !== info.king) {
             this.checkMoves(target) && !!selectedCell?.figure?.canMove(target)
-              ? ((target.available = true), (isMate = false))
+              ? (target.available = true)
               : (target.available = false);
           }
-          if (!selectedCell) {
-            isMate = false;
-          }
         }
-        if (!info) {
+        if (!info?.king && !info?.attacker) {
           if (selectedCell?.figure?.name === FigureNames.KING) {
             if (
-              this.isFreeForKing(target, color) &&
+              this.isCellUnderAttack(target, color) &&
               !!selectedCell?.figure?.canMove(target)
             ) {
               target.available = true;
-              isMate = false;
             } else {
               target.available = false;
+            }
+            if (
+              selectedCell?.figure?.isFirstStep &&
+              (target === this.cells[0][2] ||
+                target === this.cells[0][6] ||
+                target === this.cells[7][2] ||
+                target === this.cells[7][6])
+            ) {
+              target.available = !!this.castling(target, color);
             }
           }
           if (selectedCell?.figure?.name !== FigureNames.KING) {
             target.available = !!selectedCell?.figure?.canMove(target);
-            isMate = false;
           }
+        }
+        if (
+          selectedCell &&
+          selectedCell.figure?.name !== FigureNames.KING &&
+          target.available
+        ) {
+          const copyCells: Board = lodash.cloneDeep(this);
+          copyCells.cells[selectedCell.y][selectedCell.x].figure = null;
+          copyCells.cells[target.y][target.x].figure = selectedCell.figure;
+          (copyCells.isKingUnderAttack().BlackCheckFigures &&
+            selectedCell.figure?.color === Colors.BLACK) ||
+          (copyCells.isKingUnderAttack().WhiteCheckFigures &&
+            selectedCell.figure?.color === Colors.WHITE)
+            ? (target.available = false)
+            : (target.available = true);
         }
       }
     }
-    // TODO mate
-
-    if (isMate === true) {
-      this.checkmate = true;
-    }
   }
-
+  public castling(target: Cell, color: Colors | undefined): boolean {
+    if (
+      color === Colors.BLACK &&
+      target.x === 2 &&
+      target.y === 0 &&
+      this.cells[0][0].figure?.isFirstStep &&
+      this.cells[0][4].figure?.isFirstStep &&
+      !this.cells[0][1].figure &&
+      !this.cells[0][2].figure &&
+      !this.cells[0][3].figure &&
+      this.isCellUnderAttack(this.getCell(0, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(1, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(4, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(3, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(2, 0), Colors.BLACK)
+    ) {
+      return true;
+    }
+    if (
+      color === Colors.BLACK &&
+      target.x === 6 &&
+      target.y === 0 &&
+      this.cells[0][7].figure?.isFirstStep &&
+      this.cells[0][4].figure?.isFirstStep &&
+      !this.cells[0][5].figure &&
+      !this.cells[0][6].figure &&
+      this.isCellUnderAttack(this.getCell(6, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(5, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(4, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(7, 0), Colors.BLACK)
+    ) {
+      return true;
+    }
+    if (
+      color === Colors.WHITE &&
+      target.x === 2 &&
+      target.y === 7 &&
+      this.cells[7][0].figure?.isFirstStep &&
+      this.cells[7][4].figure?.isFirstStep &&
+      !this.cells[7][1].figure &&
+      !this.cells[7][2].figure &&
+      !this.cells[7][3].figure &&
+      this.isCellUnderAttack(this.getCell(0, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(1, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(4, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(3, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(2, 7), Colors.WHITE)
+    ) {
+      return true;
+    }
+    if (
+      color === Colors.WHITE &&
+      target.x === 6 &&
+      target.y === 7 &&
+      this.cells[7][7].figure?.isFirstStep &&
+      this.cells[7][4].figure?.isFirstStep &&
+      !this.cells[7][5].figure &&
+      !this.cells[7][6].figure &&
+      this.isCellUnderAttack(this.getCell(6, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(5, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(4, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(7, 7), Colors.WHITE)
+    ) {
+      return true;
+    }
+    return false;
+  }
   public getCell(x: number, y: number) {
     return this.cells[y][x];
   }
@@ -112,17 +198,11 @@ export class Board {
     });
     return { whiteKing, blackKing };
   }
-  public isFreeForKing(target: Cell, color: Colors | undefined): boolean {
+  public isCellUnderAttack(target: Cell, color: Colors | undefined): boolean {
     let targetUnderAttack: boolean = false;
     this.cells.forEach((element) => {
       element.forEach((cell) => {
         if (cell.figure?.color !== color) {
-          if (
-            cell.figure?.name === FigureNames.PAWN &&
-            cell.figure.canMove(target)
-          ) {
-            targetUnderAttack = false;
-          }
           if (
             cell.figure?.name === FigureNames.PAWN &&
             cell.isPawnAttack(target)
@@ -132,11 +212,7 @@ export class Board {
 
           if (
             cell.figure?.canMove(target) &&
-            (cell.figure?.name === FigureNames.ROOK ||
-              cell.figure?.name === FigureNames.BISHOP ||
-              cell.figure?.name === FigureNames.QUEEN ||
-              cell.figure?.name === FigureNames.KING ||
-              cell.figure?.name === FigureNames.KNIGHT)
+            cell.figure?.name !== FigureNames.PAWN
           ) {
             targetUnderAttack = true;
           }
@@ -235,31 +311,8 @@ export class Board {
       }
     }
     return false;
-
-    // if (target.figure?.name === FigureNames.BISHOP) {
-    //   target.isEmptyDiagonal(king);
-    // }
-    // if (target.figure?.name === FigureNames.KNIGHT) {
-    //   target.isKnightMove(king);
-    // }
-    // if (target.figure?.name === FigureNames.PAWN) {
-    //   target.isPawnAttack(king);
-    // }
-    // if (target.figure?.name === FigureNames.QUEEN) {
-    //   target.isEmptyDiagonal(king);
-    //   target.isEmptyVertical(king);
-    //   target.isEmptyHorizontal(king);
-    // }
-    // if (target.figure?.name === FigureNames.ROOK) {
-    //   target.isEmptyHorizontal(king);
-    //   target.isEmptyVertical(king);
-    // }
-    // if (target.figure?.name === FigureNames.KING) {
-    //   return false;
-    // }
   }
-
-  public isCheckmate() {
+  public isCheckmate(color: Colors | undefined) {
     if (this.isKingUnderAttack().BlackCheckFigures && this.blackCheck) {
       this.checkmate = true;
     }
@@ -277,6 +330,31 @@ export class Board {
     }
     if (this.isKingUnderAttack().WhiteCheckFigures && !this.whiteCheck) {
       this.whiteCheck = true;
+    }
+    if (this.whiteCheck || this.blackCheck) {
+      const oppositeColor =
+        color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
+      let checkmate: boolean = true;
+      const copyCells: Board = lodash.cloneDeep(this);
+
+      copyCells.cells.forEach((element) => {
+        element.forEach((cell) => {
+          if (cell.figure && cell.figure?.color === oppositeColor) {
+            copyCells.highlightCells(cell, oppositeColor);
+            for (let i = 0; i < copyCells.cells.length; i++) {
+              const row = copyCells.cells[i];
+              for (let j = 0; j < row.length; j++) {
+                if (row[j].available === true) {
+                  checkmate = false;
+                }
+              }
+            }
+          }
+        });
+      });
+      if (checkmate) {
+        this.checkmate = true;
+      }
     }
   }
   private addPawns() {
@@ -311,8 +389,33 @@ export class Board {
     new Rook(Colors.BLACK, this.getCell(7, 0));
     new Rook(Colors.WHITE, this.getCell(7, 7));
   }
-  public promoteQueen(color: Colors, x: number, y: number) {
-    new Queen(color, this.getCell(x, y));
+  public pawnReady() {
+    let pawnCell: Cell | null = null;
+    this.cells.forEach((element) => {
+      element.forEach((cell) => {
+        if (
+          cell?.figure?.name === FigureNames.PAWN &&
+          (cell.y === 0 || cell.y === 7)
+        ) {
+          pawnCell = cell;
+        }
+      });
+    });
+    this.promotePawnCell = pawnCell;
+  }
+  public promotePawn(color: Colors | undefined, cell: Cell, type: FigureNames) {
+    if (type === FigureNames.QUEEN && color) {
+      new Queen(color, cell);
+    }
+    if (type === FigureNames.ROOK && color) {
+      new Rook(color, cell);
+    }
+    if (type === FigureNames.KNIGHT && color) {
+      new Knight(color, cell);
+    }
+    if (type === FigureNames.BISHOP && color) {
+      new Bishop(color, cell);
+    }
   }
   public addFigures() {
     this.addBishops();
