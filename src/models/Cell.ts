@@ -135,30 +135,6 @@ export class Cell {
   }
 
   moveFigure(target: Cell) {
-    // if (
-    //   this.figure?.color === Colors.BLACK &&
-    //   target.y === 7 &&
-    //   this.figure?.name === FigureNames.PAWN
-    // ) {
-    //   const color = this.figure?.color;
-    //   if (target.figure) {
-    //     this.addLostFigure(target.figure);
-    //   }
-    //   this.figure = null;
-    //   target.board.promotePawn(color, target, FigureNames.QUEEN);
-    // }
-    // if (
-    //   this.figure?.color === Colors.WHITE &&
-    //   target.y === 0 &&
-    //   this.figure?.name === FigureNames.PAWN
-    // ) {
-    //   const color = this.figure?.color;
-    //   if (target.figure) {
-    //     this.addLostFigure(target.figure);
-    //   }
-    //   this.figure = null;
-    //   target.board.promotePawn(color, target, FigureNames.QUEEN);
-    // }
     if (
       this?.figure?.name === FigureNames.KING &&
       this?.figure?.color === Colors.BLACK &&

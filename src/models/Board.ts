@@ -385,7 +385,6 @@ export class Board {
       }
     }
   }
-  public isStalemate() {}
   private addPawns() {
     for (let i = 0; i < 8; i++) {
       new Pawn(Colors.BLACK, this.getCell(i, 1));
