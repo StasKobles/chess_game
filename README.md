@@ -9,22 +9,22 @@ Implemented player change, movement of pieces, check, raking (checking the first
     <a href="https://sass-lang.com"><img src="https://github.com/devicons/devicon/blob/master/icons/sass/sass-original.svg" title="Sass"  alt="Sass" width="40" height="40"/></a>&nbsp;
 </p>
 
-### You can see it <a href="https://chesskobles.herokuapp.com/">`HERE`</a>
+# You can see it <a href="https://chesskobles.herokuapp.com/">`HERE`</a>
 
-### 👨‍💻 &nbsp; Install this app :
+## 👨‍💻 &nbsp; Install this app :
 
-## Copy repo
+### Copy repo
 
-### `git clone https://github.com/StasKobles/chess_game`
+#### `git clone https://github.com/StasKobles/chess_game`
 
-### `cd chess_game/`
+#### `cd chess_game/`
 
-## To install dependencies
+### To install dependencies
 
-### `npm install`
+#### `npm install`
 
-## To start project
+### To start project
 
-### `npm start`
+#### `npm start`
 
-## Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
