@@ -1,0 +1,117 @@
+$screen: 1224px
+
+*
+  margin: 0
+  padding: 0
+@media (min-width: $screen)
+
+  .screen
+    width: 60%
+    height: 80%
+    border: 5px solid gainsboro
+    padding: 2px
+    border-radius: 25px
+    margin-left: 20%
+    margin-top: 75px
+    display: flex
+    justify-content: center
+    align-items: center
+
+  .board
+    padding-top: 25px
+    width: calc(64px * 8)
+    height: calc(64px * 8)
+    display: flex
+    flex-wrap: wrap
+
+    &Container
+      display: flex
+      flex-direction: column
+
+  .cell
+    width: 64px
+    height: 64px
+    display: flex
+    justify-content: center
+    align-items: center
+
+    & img
+      width: 48px
+      height: 48px
+      position: relative
+  .available
+    height: 12px
+    width: 12px
+    border-radius: 50%
+    background-color: green
+
+  .lost
+    height: calc(50vh - 60px)
+    padding: 30px
+    margin-left: 50px
+    background-color: lightgray
+
+    &.img
+      width: 20px
+      height: 20px
+
+@media (max-width: $screen)
+  .screen
+    display: flex
+    flex-direction: column
+    align-items: center
+    margin-top: 25px
+  h3
+    text-align: center
+  .timerBlock
+    display: flex
+    flex-direction: column
+    align-items: center
+  .board
+    padding-top: 15px
+    width: calc(45px * 8)
+    height: calc(45px * 8)
+    display: flex
+    flex-wrap: wrap
+    margin-bottom: 40px
+    &Container
+      display: flex
+      flex-direction: column
+
+  .cell
+    width: 45px
+    height: 45px
+    display: flex
+    justify-content: center
+    align-items: center
+
+    & img
+      width: 33px
+      height: 33px
+      position: relative
+  .available
+    height: 8px
+    width: 8px
+    border-radius: 50%
+    background-color: green
+
+  .lost
+    height: calc(40vh - 50px)
+    padding: 10px
+    margin-left: 10px
+    background-color: lightgray
+
+    &.img
+      width: 15px
+      height: 15px
+  .lostFiguresBlock
+    display: flex
+
+.black
+  background-color: deepskyblue
+
+.white
+  background-color: yellow
+
+.selected
+  background-color: brown

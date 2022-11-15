@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
-import BoardComponent from "./components/BoardComponent";
-import LostFigures from "./components/LostFigures";
-import Timer from "./components/Timer";
+import { useEffect, useState } from "react";
+import "./App.sass";
 import { Board } from "./models/Board";
 import { Colors } from "./models/Colors";
 import { Player } from "./models/Player";
+import MediaQuery, { useMediaQuery } from "react-responsive";
+import Desktop from "./components/displays/Desktop";
+import Mobile from "./components/displays/Mobile";
 const App = () => {
   const [board, setBoard] = useState(new Board());
   const whitePlayer = new Player(Colors.WHITE);
   const blackPlayer = new Player(Colors.BLACK);
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
+  const isDesktopOrLaptop = useMediaQuery({
+    query: "(min-width: 1224px)",
+  });
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
   useEffect(() => {
     restart();
   }, []);
@@ -31,18 +35,24 @@ const App = () => {
   }
   return (
     <div className="app">
-      <Timer restart={restart} currentPlayer={currentPlayer} />
-      <BoardComponent
-        restart={restart}
-        board={board}
-        setBoard={setBoard}
-        currentPlayer={currentPlayer}
-        swapPlayer={swapPlayer}
-      ></BoardComponent>
-      <div>
-        <LostFigures figures={board.lostBlackFigures} title="Black figures" />
-        <LostFigures figures={board.lostWhiteFigures} title="White figures" />
-      </div>
+      {isDesktopOrLaptop && (
+        <Desktop
+          restart={restart}
+          board={board}
+          setBoard={setBoard}
+          currentPlayer={currentPlayer}
+          swapPlayer={swapPlayer}
+        />
+      )}
+      {isTabletOrMobile && (
+        <Mobile
+          restart={restart}
+          board={board}
+          setBoard={setBoard}
+          currentPlayer={currentPlayer}
+          swapPlayer={swapPlayer}
+        />
+      )}
     </div>
   );
 };

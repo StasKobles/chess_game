@@ -75,7 +75,7 @@ const BoardComponent: FC<BoardProps> = ({
   };
 
   return (
-    <div className="boardContainer">
+    <div className="Container">
       {board.checkmate || board.stalemate ? (
         <Modal
           show={show}
