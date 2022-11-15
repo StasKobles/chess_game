@@ -16,6 +16,7 @@ export class Board {
   whiteCheck: boolean = false;
   blackCheck: boolean = false;
   checkmate: boolean = false;
+  stalemate: boolean = false;
   promotePawnCell: Cell | null = null;
 
   public initCells() {
@@ -39,6 +40,7 @@ export class Board {
     newBoard.blackCheck = this.blackCheck;
     newBoard.whiteCheck = this.whiteCheck;
     newBoard.checkmate = this.checkmate;
+    newBoard.stalemate = this.stalemate;
     newBoard.promotePawnCell = this.promotePawnCell;
     return newBoard;
   }
@@ -356,7 +358,34 @@ export class Board {
         this.checkmate = true;
       }
     }
+    if (!this.whiteCheck && !this.blackCheck) {
+      const oppositeColor =
+        color === Colors.BLACK ? Colors.WHITE : Colors.BLACK;
+      let stalemate: boolean = true;
+      const copyCells: Board = lodash.cloneDeep(this);
+
+      copyCells.cells.forEach((element) => {
+        element.forEach((cell) => {
+          if (cell.figure && cell.figure?.color === oppositeColor) {
+            copyCells.highlightCells(cell, oppositeColor);
+            for (let i = 0; i < copyCells.cells.length; i++) {
+              const row = copyCells.cells[i];
+              for (let j = 0; j < row.length; j++) {
+                if (row[j].available === true) {
+                  console.log(row[j]);
+                  stalemate = false;
+                }
+              }
+            }
+          }
+        });
+      });
+      if (stalemate) {
+        this.stalemate = true;
+      }
+    }
   }
+  public isStalemate() {}
   private addPawns() {
     for (let i = 0; i < 8; i++) {
       new Pawn(Colors.BLACK, this.getCell(i, 1));

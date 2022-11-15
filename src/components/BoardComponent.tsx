@@ -76,7 +76,7 @@ const BoardComponent: FC<BoardProps> = ({
 
   return (
     <div className="boardContainer">
-      {board.checkmate ? (
+      {board.checkmate || board.stalemate ? (
         <Modal
           show={show}
           onHide={handleClose}
@@ -84,11 +84,17 @@ const BoardComponent: FC<BoardProps> = ({
           keyboard={false}
         >
           <Modal.Header>
-            <Modal.Title>That`s mate!</Modal.Title>
+            <Modal.Title>
+              {board.checkmate ? "That`s mate!" : "That`s stalemate"}
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {board.blackCheck ? "White" : "Black"} wins! Congratulations! One
-            more game?
+            {board.checkmate
+              ? ` ${
+                  board.blackCheck ? "White" : "Black"
+                } wins! Congratulations! One
+            more game?`
+              : "It`s a draw! One more game?"}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={handleRestartMate}>
@@ -113,19 +119,19 @@ const BoardComponent: FC<BoardProps> = ({
               onClick={() => handleRestartPromote(FigureNames.QUEEN)}
             >
               Queen
-            </Button>{" "}
+            </Button>
             <Button
               variant="primary"
               onClick={() => handleRestartPromote(FigureNames.KNIGHT)}
             >
               Knight
-            </Button>{" "}
+            </Button>
             <Button
               variant="primary"
               onClick={() => handleRestartPromote(FigureNames.BISHOP)}
             >
               Bishop
-            </Button>{" "}
+            </Button>
             <Button
               variant="primary"
               onClick={() => handleRestartPromote(FigureNames.ROOK)}
