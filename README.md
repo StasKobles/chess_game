@@ -1,5 +1,5 @@
 # This chess is pet project
-Implemented player change, movement of pieces, check, raking (checking the first move and the beaten square), promote a pawn with the choice of a piece, winning by time, winning by checkmate, stalemate and recording lost pieces. Available for PC and Smartphone. The game is available for two players from one device.
+Implemented player change, movement of pieces, check, raking (checking the first move and the beaten square), promote a pawn with the choice of a piece, winning by time, winning by checkmate, stalemate and recording lost pieces. Available for PC and Smartphone. The game is available for two players from one device
 
 ## Stack
 
@@ -12,6 +12,12 @@ Implemented player change, movement of pieces, check, raking (checking the first
 ### You can see it <a href="https://chesskobles.herokuapp.com/">`HERE`</a>
 
 ### 👨‍💻 &nbsp; Install this app :
+
+## Copy repo
+
+### `git clone https://github.com/StasKobles/chess_game`
+
+### `cd chess_game/`
 
 ## To install dependencies
 
