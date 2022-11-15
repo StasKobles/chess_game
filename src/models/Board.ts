@@ -126,11 +126,9 @@ export class Board {
       !this.cells[0][1].figure &&
       !this.cells[0][2].figure &&
       !this.cells[0][3].figure &&
-      this.isCellUnderAttack(this.getCell(0, 0), Colors.BLACK) &&
-      this.isCellUnderAttack(this.getCell(1, 0), Colors.BLACK) &&
-      this.isCellUnderAttack(this.getCell(4, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(2, 0), Colors.BLACK) &&
       this.isCellUnderAttack(this.getCell(3, 0), Colors.BLACK) &&
-      this.isCellUnderAttack(this.getCell(2, 0), Colors.BLACK)
+      this.isCellUnderAttack(this.getCell(4, 0), Colors.BLACK)
     ) {
       return true;
     }
@@ -142,10 +140,9 @@ export class Board {
       this.cells[0][4].figure?.isFirstStep &&
       !this.cells[0][5].figure &&
       !this.cells[0][6].figure &&
-      this.isCellUnderAttack(this.getCell(6, 0), Colors.BLACK) &&
-      this.isCellUnderAttack(this.getCell(5, 0), Colors.BLACK) &&
       this.isCellUnderAttack(this.getCell(4, 0), Colors.BLACK) &&
-      this.isCellUnderAttack(this.getCell(7, 0), Colors.BLACK)
+      this.isCellUnderAttack(this.getCell(5, 0), Colors.BLACK) &&
+      this.isCellUnderAttack(this.getCell(6, 0), Colors.BLACK)
     ) {
       return true;
     }
@@ -158,11 +155,9 @@ export class Board {
       !this.cells[7][1].figure &&
       !this.cells[7][2].figure &&
       !this.cells[7][3].figure &&
-      this.isCellUnderAttack(this.getCell(0, 7), Colors.WHITE) &&
-      this.isCellUnderAttack(this.getCell(1, 7), Colors.WHITE) &&
-      this.isCellUnderAttack(this.getCell(4, 7), Colors.WHITE) &&
+      this.isCellUnderAttack(this.getCell(2, 7), Colors.WHITE) &&
       this.isCellUnderAttack(this.getCell(3, 7), Colors.WHITE) &&
-      this.isCellUnderAttack(this.getCell(2, 7), Colors.WHITE)
+      this.isCellUnderAttack(this.getCell(3, 7), Colors.WHITE)
     ) {
       return true;
     }
@@ -176,8 +171,7 @@ export class Board {
       !this.cells[7][6].figure &&
       this.isCellUnderAttack(this.getCell(6, 7), Colors.WHITE) &&
       this.isCellUnderAttack(this.getCell(5, 7), Colors.WHITE) &&
-      this.isCellUnderAttack(this.getCell(4, 7), Colors.WHITE) &&
-      this.isCellUnderAttack(this.getCell(7, 7), Colors.WHITE)
+      this.isCellUnderAttack(this.getCell(4, 7), Colors.WHITE)
     ) {
       return true;
     }
