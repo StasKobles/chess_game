@@ -3,7 +3,7 @@ import "./App.sass";
 import { Board } from "./models/Board";
 import { Colors } from "./models/Colors";
 import { Player } from "./models/Player";
-import MediaQuery, { useMediaQuery } from "react-responsive";
+import { useMediaQuery } from "react-responsive";
 import Desktop from "./components/displays/Desktop";
 import Mobile from "./components/displays/Mobile";
 const App = () => {
