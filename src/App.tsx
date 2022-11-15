@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import "./App.sass";
+import Desktop from "./components/displays/Desktop";
+import Mobile from "./components/displays/Mobile";
 import { Board } from "./models/Board";
 import { Colors } from "./models/Colors";
 import { Player } from "./models/Player";
-import { useMediaQuery } from "react-responsive";
-import Desktop from "./components/displays/Desktop";
-import Mobile from "./components/displays/Mobile";
 const App = () => {
   const [board, setBoard] = useState(new Board());
   const whitePlayer = new Player(Colors.WHITE);

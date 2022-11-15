@@ -1,8 +1,8 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { Colors } from "../models/Colors";
-import { Player } from "../models/Player";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { Colors } from "../models/Colors";
+import { Player } from "../models/Player";
 
 interface TimerProps {
   currentPlayer: Player | null;

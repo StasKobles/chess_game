@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Board } from "../../models/Board";
 import { Player } from "../../models/Player";
 import BoardComponent from "../BoardComponent";

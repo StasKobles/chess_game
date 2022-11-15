@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { Board } from "../models/Board";
 import { Cell } from "../models/Cell";
 import { FigureNames } from "../models/figures/Figure";
