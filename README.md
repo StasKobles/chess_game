@@ -1,4 +1,5 @@
 # This chess is pet project
+Implemented player change, movement of pieces, check, raking (checking the first move and the beaten square), promote a pawn with the choice of a piece, winning by time, winning by checkmate, stalemate and recording lost pieces. Available for PC and Smartphone. The game is available for two players from one device.
 
 ## Stack
 
