@@ -9,7 +9,7 @@ Implemented player change, movement of pieces, check, raking (checking the first
     <a href="https://sass-lang.com"><img src="https://github.com/devicons/devicon/blob/master/icons/sass/sass-original.svg" title="Sass"  alt="Sass" width="40" height="40"/></a>&nbsp;
 </p>
 
-# You can see it <a href="https://vercel.com/alca-code/chess-game/26MEmKadtTvZsbUKKZp4pQE8f71k">`HERE`</a>
+# You can see it <a href="https://chess-game-9aj0mo3mb-alca-code.vercel.app/">`HERE`</a>
 
 ## 👨‍💻 &nbsp; Install this app :
 
